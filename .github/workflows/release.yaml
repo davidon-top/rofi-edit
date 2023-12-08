@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  binary: rust-template
+
+
+jobs:
+  release-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: olegtarasov/get-tag@v2.1.2
+        id: get_version
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: x86_64-unknown-linux-gnu
+      - name: Build
+        run: |
+          cargo build --release --target x86_64-unknown-linux-gnu
+      - name: Upload binaries to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: target/x86_64-unknown-linux-gnu/release/${{ env.binary }}
+          name: ${{ env.binary }}
+          retention-days: 1
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.binary }}
+          asset_name: ${{ env.binary }}-linux-${{ steps.get_version.outputs.tag }}
+          tag: ${{ github.ref }}
+          overwrite: true

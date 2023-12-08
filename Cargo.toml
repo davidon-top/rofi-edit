@@ -1,0 +1,17 @@
+[package]
+name = "rust-template"
+version = "0.1.0"
+edition = "2021"
+description = "A template for rust projects"
+authors = ["DavidOnTop <me@davidon.top>"]
+readme = "README.md"
+documentation = "https://docs.rs/rust-template"
+license = "MIT"
+repository = "git@github.com:davidon-top/rust-template.git"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+tokio = { version = "1.0", features = ["full"] }
