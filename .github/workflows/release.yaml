@@ -20,6 +20,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@nightly
         with:
           targets: x86_64-unknown-linux-gnu
+      - name: install dependencies
+        run: |
+          sudo apt-get update; sudo apt-get install libcogl-pango-dev
       - name: Build
         run: |
           cargo build --release --target x86_64-unknown-linux-gnu
