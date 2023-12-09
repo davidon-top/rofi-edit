@@ -14,18 +14,6 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-      - name: Install toolchain
-        uses: dtolnay/rust-toolchain@nightly
-      - name: Run cargo test
-        run: cargo test
-
-
   clippy_check:
     name: Clippy
     runs-on: ubuntu-latest

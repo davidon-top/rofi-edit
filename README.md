@@ -1,1 +1,1 @@
-# Template repo
+# Rofi edit plugin
