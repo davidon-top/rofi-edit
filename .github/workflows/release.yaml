@@ -29,14 +29,14 @@ jobs:
       - name: Upload binaries to artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: target/x86_64-unknown-linux-gnu/release/${{ env.binary }}.so
-          name: ${{ env.binary }}.so
+          path: target/x86_64-unknown-linux-gnu/release/lib${{ env.binary }}.so
+          name: lib${{ env.binary }}.so
           retention-days: 1
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.binary }}.so
-          asset_name: ${{ env.binary }}-linux-${{ steps.get_version.outputs.tag }}.so
+          file: lib${{ env.binary }}.so
+          asset_name: lib${{ env.binary }}.so
           tag: ${{ github.ref }}
           overwrite: true
