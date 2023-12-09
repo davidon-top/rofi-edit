@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  binary: rofi-edit
+  binary: rofi_edit
 
 
 jobs:
