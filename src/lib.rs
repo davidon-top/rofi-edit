@@ -3,6 +3,8 @@ pub mod mode_logic;
 
 use std::io::Read;
 
+use serde_json::Value;
+
 use crate::item::*;
 
 struct Mode<'rofi> {
@@ -11,6 +13,7 @@ struct Mode<'rofi> {
 	items: Vec<ItemContainer>,
 	state: State,
 	message: String,
+	output_singleobj: bool,
 }
 
 // reads until 2 subsequent newlines
@@ -42,6 +45,7 @@ impl<'rofi> rofi_mode::Mode<'rofi> for Mode<'rofi> {
 --edit-file	<file>	Read input from file, json file
 --edit-input	<input> Read input, should be a string containing json
 --edit-example	Prints examples
+--edit-out-singleobj	Outputs single object insted of array of objects see --edit-example for example
 			"#
 			);
 			return Err(());
@@ -82,7 +86,15 @@ impl<'rofi> rofi_mode::Mode<'rofi> for Mode<'rofi> {
 					},
 				},
 			];
-			eprintln!("Example input:\n{}\n\nOutput is the same with changed value keys\nKeys with value of null can be omited", serde_json::to_string_pretty(&its).unwrap());
+			eprintln!("Example input:\n{}\n\nOutput is the same with changed value keys\nKeys with value of null can be omited\n\n", serde_json::to_string(&its).unwrap());
+			// single obj
+			let mut val = serde_json::from_str::<Value>("{}").unwrap();
+			let value  = val.as_object_mut().unwrap();
+			its.iter().for_each(|item| {
+				value.insert(item.name.clone(), serde_json::to_value(&item.item).unwrap());
+			});
+			eprintln!("Example when using --edit-singleobj\n\n {}", serde_json::to_string(&val).unwrap());
+
 			return Err(());
 		}
 		let items: Vec<ItemContainer> = if args.contains(&"--edit-stdin".to_string()) {
@@ -99,12 +111,14 @@ impl<'rofi> rofi_mode::Mode<'rofi> for Mode<'rofi> {
 			eprintln!("No input specified, use --edit-help for help");
 			return Err(());
 		};
+		let out_type = args.contains(&"--edit-out-singleobj".to_string());
 		let mut s = Self {
 			api,
 			entries: Vec::with_capacity(items.len() + 1),
 			items,
 			state: State::Main,
 			message: String::new(),
+			output_singleobj: out_type,
 		};
 		s.entries_from_items();
 		Ok(s)

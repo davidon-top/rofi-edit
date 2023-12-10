@@ -1,3 +1,5 @@
+use serde_json::Value;
+
 use crate::{item::*, Mode};
 
 impl<'rofi> Mode<'rofi> {
@@ -130,6 +132,15 @@ impl<'rofi> Mode<'rofi> {
 	}
 
 	pub fn print_items(&self) {
-		println!("{}", serde_json::to_string(&self.items).unwrap());
+		if self.output_singleobj {
+			let mut val = serde_json::from_str::<Value>("{}").unwrap();
+			let value  = val.as_object_mut().unwrap();
+			self.items.iter().for_each(|item| {
+				value.insert(item.name.clone(), serde_json::to_value(&item.item).unwrap());
+			});
+			println!("{}", serde_json::to_string(&val).unwrap());
+		} else {
+			println!("{}", serde_json::to_string(&self.items).unwrap());
+		}
 	}
 }
